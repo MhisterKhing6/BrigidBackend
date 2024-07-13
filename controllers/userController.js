@@ -2,14 +2,14 @@
 controls user endpoints operations
 */
 /*handles user controller functions */
-import { UserModel } from "../models/user.js"
-import { sendEmailVerification, sendResetPassword  } from "../utils/EmailHandler.js"
-import sha1 from "sha1"
-import { erroReport } from "../utils/errors.js"
-import { VerifTokenModel } from "../models/verifyToken.js"
 import { ObjectId } from "mongodb"
-import { generateToken } from "../utils/WebTokenController.js"
+import sha1 from "sha1"
+import { UserModel } from "../models/user.js"
+import { VerifTokenModel } from "../models/verifyToken.js"
+import { sendEmailVerification, sendResetPassword } from "../utils/EmailHandler.js"
 import { TwoHourPass, generateSecretNumber } from "../utils/VerificationFunctions.js"
+import { generateToken } from "../utils/WebTokenController.js"
+import { erroReport } from "../utils/errors.js"
 
 class UserController  {
 
@@ -164,7 +164,7 @@ class UserController  {
             //delete old verification entry
             await VerifTokenModel.deleteOne({"userId": customer._id.toString()})
             //generate verifcation entry and save
-            let verficaitonDetails = {userId:customer._id.toString(), type, verificationCode:generateSecretNumber()}
+            let verficaitonDetails = {userId:customer._id.toString(), type:"password", verificationCode:generateSecretNumber()}
             let verificatonEntry = await new VerifTokenModel(verficaitonDetails).save()
             //check the type to determine the type of message to send
             if(type === "password")
@@ -290,4 +290,5 @@ class UserController  {
     }
 }
 
-export {UserController}
+export { UserController }
+
