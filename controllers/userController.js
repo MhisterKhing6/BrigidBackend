@@ -3,12 +3,13 @@ controls user endpoints operations
 */
 /*handles user controller functions */
 import { UserModel } from "../models/user.js"
-import { sendEmailVerification } from "../utils/EmailHandler.js"
+import { sendEmailVerification, sendResetPassword  } from "../utils/EmailHandler.js"
 import sha1 from "sha1"
 import { erroReport } from "../utils/errors.js"
-import { generateToken } from "../utils/WebTokenController.js"
 import { VerifTokenModel } from "../models/verifyToken.js"
-import { generateSecretNumber} from "../utils/VerificationFunctions.js"
+import { ObjectId } from "mongodb"
+import { generateToken } from "../utils/WebTokenController.js"
+import { TwoHourPass, generateSecretNumber } from "../utils/VerificationFunctions.js"
 
 class UserController  {
 
