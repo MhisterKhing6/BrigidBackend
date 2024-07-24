@@ -2,7 +2,6 @@ import Express from "express";
 import Cors from "cors"
 import configuration from "config"
 import { connectDb } from "./utils/MongodbConector.js";
-import { nonAuthRoute } from "./routes/userRoute.js";
 import { adminRoute } from "./routes/adminRoute.js";
 import { clientRoute } from "./routes/clientRoute.js";
 
@@ -18,11 +17,14 @@ server.use(Express.json({})) // json body parsing
 server.use(Express.urlencoded({ extended: false }))
 
 //routes
-server.use("/auth", nonAuthRoute)
+
 //admin route
 server.use('/admin', adminRoute)
 //client route
 server.use('/user', clientRoute)
+
+//static endpoints
+server.use('/public',Express.static('public'))
 
 
 

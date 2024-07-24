@@ -1,13 +1,15 @@
-import {model, Types, Schema } from "mongoose";
-const OrderItemSchema = new Schema({
-    customerId: {type:Types.ObjectId, required:true},
-    orderId: {type:Types.ObjectId, required: true},
+import { Schema, Types, model } from "mongoose";
+let Order = new Schema({
+    email: {type:String, required:true},
     createdAt : {type:Date, default:Date.now()},
-    status : {type:String, required:true, enum:["delivered", "preparing", "on delivery", "cancelled", "delivered"]},
-    
-})
-
+    totalPrice : {type:Number, default:0},
+    status : {type:String, enum:["preparing", "on delivery", "cancelled", "delivered"]},
+}
+)
 
 //create a model
-let OrderItemModel = model("OrderItem", OrderItemSchema)
-export {OrderItemModel}
+let OrderModel = model("Order", Order)
+
+//return model
+export { OrderModel };
+

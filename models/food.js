@@ -1,13 +1,14 @@
-import {model, Schema, Types } from "mongoose";
+import { model, Schema } from "mongoose";
 const FoodSchema = new Schema({
     name:{type: String, required:true},
     description:{type:String, required:true},
-    categoryId: {type:Types.ObjectId, required: true},
-    allowedStartDate: {type:Date},
-    allowedEndDate: {type:Date},
-    url: {type:String, required:true}
+    url: {type:String, required:true},
+    size:{type:String, required:true},
+    price:{type:Number, required:true},
+    enabled: {type:Boolean, default:true}
 })
 
 //create a model
 let FoodModel = model("Food", FoodSchema)
-export {FoodModel}
+export { FoodModel };
+

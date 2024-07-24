@@ -1,9 +1,12 @@
 {
     "host": {
-        "port": 8000
+        "onePath":"",
+        "port": 8000,
+        "protocol": "http",
+        "ip": "localhost"
     }, 
 
-    "MONGO_URI":"mongodb://localhost:27017/test",
+    "MONGO_URI":"mongodb://localhost:27017/biddy",
     "email": {
         "email": "autocodegrader75@gmail.com",
         "secrete": "okuiugeaouthupzv"
