@@ -1,10 +1,13 @@
 import { Schema, Types, model } from "mongoose";
-let Order = new Schema({
+let Order = new Schema(
+    {
     email: {type:String, required:true},
     createdAt : {type:Date, default:Date.now()},
     totalPrice : {type:Number, default:0},
+    location: {type:String},
+    mode: {type:String},
     status : {type:String, enum:["preparing", "on delivery", "cancelled", "delivered"]},
-}
+    }
 )
 
 //create a model
