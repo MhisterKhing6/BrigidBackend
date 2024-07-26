@@ -6,7 +6,7 @@ let Order = new Schema(
     totalPrice : {type:Number, default:0},
     location: {type:String},
     mode: {type:String},
-    status : {type:String, enum:["preparing", "on delivery", "cancelled", "delivered"]},
+    status : {type:String, enum:["pending", "completed", "cancelled"], default:"pending"},
     }
 )
 
