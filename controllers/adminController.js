@@ -1,6 +1,7 @@
 import path from "path"
 import { FoodModel } from "../models/food.js"
 import { FoodCatModel } from "../models/foodCategories.js"
+import { IngredientModel } from "../models/ingredients.js"
 import { OrderModel } from "../models/orders.js"
 import { generateFileUrl, saveUpolaodFileDisk } from "../utils/FileHandler.js"
 import { erroReport } from "../utils/errors.js"
@@ -233,6 +234,21 @@ class AdminController {
     return res.status(200).json(orders)
   }
 
+ static addIngredients = async(req, res) => {
+    let ingredients = req.body
+    let modelIngrdients = ingredients.map(val => {
+        return new IngredientModel({name: val.name, price:val.price}).save()
+    })
+    await Promise.all(modelIngrdients)
+    return res.status(200).json({message:"saved"})
+ }
+static getIngredients = async (req, res) => {
+    let ingredients = await IngredientModel.find().lean("-__v")
+    return res.status(200).json(ingredients)
 
 }
+
+}
+
+
 export { AdminController }

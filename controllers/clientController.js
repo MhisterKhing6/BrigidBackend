@@ -2,6 +2,8 @@ import { UserAddressModel } from "../models/address.js"
 import { FoodModel } from "../models/food.js"
 import { OrderItemModel } from "../models/orderItem.js"
 import { OrderModel } from "../models/orders.js"
+import { ReviewModel } from "../models/review.js"
+import { ToppingModel } from "../models/toppings.js"
 
 
 class ClientController {
@@ -20,26 +22,34 @@ class ClientController {
         let response = await new UserAddressModel(addressinfo).save()
         return res.status(200).json("address added")
     }
-    static order= async (req, res) => {
+
+    static order = async (req, res) => {
         //order items {email:email, orderItems:[{foodId:quantity, price}, {foodId:quantity, price}]}
         let orderDetails = req.body
         //form food order
-        if(!(orderDetails.email && orderDetails.orderItems))
+        if(!(orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
             return res.status(400).json({"message": "not all fields given"})
         //get date of the day of order
 
-        let order = await new OrderModel({email:orderDetails.email}).save()
+        let order = await new OrderModel({mode:orderDetails.mode,email:orderDetails.email, location:orderDetails.location}).save()
         
         //calculate total price
         let totalPrice = 0
+        const toppings = []
         //from order items model
         let modelOrder = orderDetails.orderItems.map(orderItems => {
             totalPrice += orderItems.unitPrice * orderItems.quantity
-            return new OrderItemModel({foodId:orderItems.foodId, quantity:orderItems.quantity, orderId:order._id, unitPrice: orderItems.unitPrice}).save()
+            let orderItem = new OrderItemModel({foodId:orderItems.foodId, quantity:orderItems.quantity, orderId:order._id, unitPrice: orderItems.unitPrice})
+            if(orderItems.toppings) {
+                for(const topping of orderItems.toppings) {
+                    toppings.push(new ToppingModel({inGredientName:topping.name,  orderItemId:orderItem._id}).save())
+                }
+            }
+            return new OrderItemModel(orderItem.save())
         })
         order.totalPrice = totalPrice
         //save orders and order items
-        await Promise.all([order.save(), ...modelOrder])
+        await Promise.all([order.save(), ...modelOrder, ...toppings])
         return res.status(200).json({"message": "orders saved"})
     }
 
@@ -50,7 +60,6 @@ class ClientController {
         //get customers orders where status is not delivered
         let email = req.params.email
         let cus = await OrderModel.find({email}).lean().select("-__v")
-        
         return res.status(200).json(cus)
     }
 
@@ -60,8 +69,16 @@ class ClientController {
         let orderId = req.params.orderId
         //find all order item that have given id
         let orderItems = await OrderItemModel.find({orderId}).lean().select("-__v")
-        //get the food name and size associated with the order item        
-        return res.status(200).json(orderItems)
+        //get order items
+        let orderItemL = []
+        for(const orderItem of orderItems){
+            let topping = await ToppingModel.find({orderItemId:orderItem._id}).lean().select("-__v")
+            if(topping.length !== 0) {
+                orderItem.topping = topping
+            }
+            orderItemL.push(orderItem)
+        }
+        return res.status(200).json(orderItemL)
     }
 
     static searchFood = async(req, res) => {
@@ -79,6 +96,29 @@ class ClientController {
             enabledFood = await FoodModel.find({name: {"$regex": foodPattern, "$options": "i"}}).select("-__v").lean()
         }
         return res.status(200).json(enabledFood)
+    }
+
+    static review = async (req, res) => {
+        let revDetials = req.body
+        if(!(revDetials.email && revDetials.rating)) {
+            return res.status(400).json({"message": "not all fields given"})
+        }
+        let response = await ReviewModel({rating:revDetials.rating, email:revDetials.email, comment:revDetials.comment}).save()
+        return res.status(200).json({"message": "comment saved"})
+    }
+
+    static getReview = async(req, res) => {
+        /**
+         * getReview: return all reviews for the plateform
+         */
+        let reviews  = await ReviewModel.find().lean().select("-__v -_id")
+        return res.status(200).json(reviews)
+    }
+
+    static customerReview = async (req, res) => {
+        let userEmail = req.params.email
+        let userReview = await ReviewModel.find({"email":userEmail}).lean().select("-__v")
+        return res.status(200).json(userReview)
     }
 }
 

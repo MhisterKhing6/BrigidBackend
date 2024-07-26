@@ -1,8 +1,5 @@
 import { Router } from "express";
 import { ClientController } from "../controllers/clientController.js";
-import { UserModel } from "../models/user.js";
-import { decodeToken, getAuthorizationtoken } from "../utils/WebTokenController.js";
-import { erroReport } from "../utils/errors.js";
 
 let clientRoute = Router()
 
@@ -42,8 +39,23 @@ clientRoute.get('/order/:email', ClientController.OrderNotDelivered)
  * get food items for a an order
  * method: get
  */
+/**
+ * get user reviews
+ */
+clientRoute.post("/review", ClientController.review)
 
-clientRoute.get("/order/:orderId", ClientController.orderItems)
+/**
+ * get all reviews
+ */
+clientRoute.get("/review", ClientController.getReview)
+
+/**
+ * get all reviews of user with an email
+ */
+clientRoute.get("/review/:email", ClientController.customerReview)
+
+/**get items of orders */
+clientRoute.get("/order/items/:orderId", ClientController.orderItems)
 
 /**
  * get enabled foods

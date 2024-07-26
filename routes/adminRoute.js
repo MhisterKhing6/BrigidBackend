@@ -1,13 +1,14 @@
 import { Router } from "express";
-import { decodeToken, getAuthorizationtoken } from "../utils/WebTokenController.js";
-import { UserModel } from "../models/user.js";
-import { erroReport } from "../utils/errors.js";
 import { AdminController } from "../controllers/adminController.js";
 
 let adminRoute = Router()
 
 
+//add ingredients
+adminRoute.post("/ingredient", AdminController.addIngredients)
 
+//get ingredients
+adminRoute.get("/ingredient", AdminController.getIngredients)
 
 /**upload food category to the server
  * method:post
@@ -54,4 +55,4 @@ adminRoute.delete("/food/:id", AdminController.deleteFood)
  */
 adminRoute.post("/enable/food", AdminController.enableFood)
 
-export {adminRoute}
+export { adminRoute };
