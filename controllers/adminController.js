@@ -133,7 +133,7 @@ class AdminController {
     static editFood = async (req, res) => {
         try {
             let foodDetails = req.body //{category:categoryId,description:description name ,url:urlOfPic, name:nana,sizes:[{name:larg, price:300},{name:medium, price:200}]}
-            let acceptedKeys = ["size","price",'fileName', "name", "url", "description", "categoryId"]
+            let acceptedKeys = ["size","price",'fileName', "name", "url", "description", "category"]
             //check if all food fields are given
             if(!foodDetails.id)
                 return erroReport(res, 400, false, "id for food is required")
