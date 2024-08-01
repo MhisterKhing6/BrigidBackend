@@ -5,6 +5,8 @@ import { IngredientModel } from "../models/ingredients.js"
 import { OrderModel } from "../models/orders.js"
 import { generateFileUrl, saveUpolaodFileDisk } from "../utils/FileHandler.js"
 import { erroReport } from "../utils/errors.js"
+import { UserModel } from "../models/user.js"
+import { isBuffer } from "util"
 
 
 /** Handle admin funtions*/
@@ -131,7 +133,7 @@ class AdminController {
     static editFood = async (req, res) => {
         try {
             let foodDetails = req.body //{category:categoryId,description:description name ,url:urlOfPic, name:nana,sizes:[{name:larg, price:300},{name:medium, price:200}]}
-            let acceptedKeys = ["sizes","price",'fileName', "name", "url", "description", "categoryId"]
+            let acceptedKeys = ["size","price",'fileName', "name", "url", "description", "categoryId"]
             //check if all food fields are given
             if(!foodDetails.id)
                 return erroReport(res, 400, false, "id for food is required")
@@ -243,10 +245,89 @@ class AdminController {
     return res.status(200).json({message:"saved"})
  }
 static getIngredients = async (req, res) => {
-    let ingredients = await IngredientModel.find().lean("-__v")
+    let ingredients = await IngredientModel.find({enable:true}).lean("-__v")
     return res.status(200).json(ingredients)
 
 }
+
+static addAdmin = async (req, res) => {
+    let details = req.body
+    try {
+    if(!(details.email && details.password)) {
+        return res.status(400).json({message: "not all fields given"})
+    }
+        await new UserModel({email:details.email, password:details.password}).save()
+        return res.status(200).json({"message": "user saved"})
+    } catch(error) {
+        console.log(error)
+        return res.status(501).json({"message": "internal error"})
+    }
+ }
+
+ static getAdmin = async (req, res) => {
+    let admins = await UserModel.find({role:"admin"}).lean()
+    return res.status(200).json(admins)
+ }
+
+ static isAdmin = async (req, res) => {
+    let email = req.params.email
+    let user  = await UserModel.findOne({email})
+    let adminStatus = false
+    if(user)
+        adminStatus = true
+    return res.status(200).json({"isAdmin":adminStatus})     
+ }
+
+ static editIngredient = async (req, res) => {
+    let details = req.body
+    if(!(details.name && details.price))
+        return res.status(400).json({"message": "not all fields given"})
+    try {
+        let ingredient = await IngredientModel.findOne({name:details.name})
+        if(!ingredient)
+            return res.status(400).json({"message": "no ingredient entry found for such name"})
+        ingredient.price = details.price
+        await ingredient.save()
+        return res.status(200).json({message: "price updated"})
+    }catch(error) {
+        console.log(error)
+        return res.status(501).json({"message": "internal error"})
+    }
+ }
+ 
+ static enableIngredient = async (req, res) => {
+    let details = req.body
+    if(!(details.name))
+        return res.status(400).json({"message": "not all fields given"})
+    try {
+        let ingredient = await IngredientModel.findOne({name:details.name})
+        if(!ingredient)
+            return res.status(400).json({"message": "no ingredient entry found for such name"})
+        ingredient.enable = details.enable
+        await ingredient.save()
+        return res.status(200).json({message: "updated"})
+    }catch(error) {
+        console.log(error)
+        return res.status(501).json({"message": "internal error"})
+    }
+ }
+ 
+ static orderStatus = async (req, res) => {
+    let details = req.body
+    try {
+        if(!(details.orderId && details.status))
+            return res.status(400).json({"message": "not all fields given"})
+        let order = await OrderModel.findById(details.orderId)
+        if(!order)
+            return res.status(400).json({"message": "wrong order noumber"})
+        order.status = details.status
+        await order.save()
+        return res.status(200).json({message:"status updated"})
+    }catch(error){
+        console.log(error)
+        return res.status(501).json({"message": "internal error"})
+    }
+ }
 
 }
 

@@ -53,6 +53,31 @@ adminRoute.delete("/food/:id", AdminController.deleteFood)
  * method: post
  * domain: restricted to administrators
  */
-adminRoute.post("/enable/food", AdminController.enableFood)
+adminRoute.post("/toggle/food", AdminController.enableFood)
+
+/**
+ * view orders in a databases
+ */
+adminRoute.get("/order", AdminController.ViewOrders)
+
+//admin add
+adminRoute.post("/register-admin", AdminController.addAdmin)
+
+//admin get Admin
+adminRoute.get("/admin-status/:email", AdminController.isAdmin)
+
+//get admin
+adminRoute.get("/admin", AdminController.getAdmin)
+
+//edit ingredient
+adminRoute.put("/ingredient", AdminController.editIngredient)
+//toggle ingredient
+adminRoute.post("/toggle/ingredient", AdminController.enableIngredient)
+
+//change status
+adminRoute.post("/order/status", AdminController.orderStatus)
+
+
+
 
 export { adminRoute };
