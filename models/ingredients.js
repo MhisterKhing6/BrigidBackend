@@ -1,4 +1,4 @@
-import { Schema, Types, model } from "mongoose";
+import { Schema, model } from "mongoose";
 let IngredientShema = new Schema(
     {
     name: {type:String, required:true},

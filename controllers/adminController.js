@@ -245,7 +245,7 @@ class AdminController {
     return res.status(200).json({message:"saved"})
  }
 static getIngredients = async (req, res) => {
-    let ingredients = await IngredientModel.find({enable:true}).lean("-__v")
+    let ingredients = await IngredientModel.find().lean().select("-__v")
     return res.status(200).json(ingredients)
 
 }
@@ -303,7 +303,7 @@ static addAdmin = async (req, res) => {
         let ingredient = await IngredientModel.findOne({name:details.name})
         if(!ingredient)
             return res.status(400).json({"message": "no ingredient entry found for such name"})
-        ingredient.enable = details.enable
+        ingredient.enable = details.status
         await ingredient.save()
         return res.status(200).json({message: "updated"})
     }catch(error) {
