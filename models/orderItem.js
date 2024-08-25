@@ -1,9 +1,10 @@
 import { Schema, Types, model } from "mongoose";
 const OrderItemSchema = new Schema({
     unitPrice:{type: Number, required:true},
-    foodId: {type:String, required:true},
-    quantity: {type:Number, required: true},
-    orderId: {type:Types.ObjectId, required: true},
+    foodId: {type:String},
+    quantity: {type:Number},
+    orderId: {type:Types.ObjectId},
+    foodName: {type:String, required:false}
 })
 
 

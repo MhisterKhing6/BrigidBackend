@@ -27,7 +27,7 @@ class ClientController {
         //order items {email:email, orderItems:[{foodId:quantity, price}, {foodId:quantity, price}]}
         let orderDetails = req.body
         //form food order
-        if(!(orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
+        if(!(orderDetails.quantity && orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
             return res.status(400).json({"message": "not all fields given"})
         //get date of the day of order
 
@@ -39,7 +39,7 @@ class ClientController {
         //from order items model
         let modelOrder = orderDetails.orderItems.map(orderItems => {
             totalPrice += orderItems.unitPrice * orderItems.quantity
-            let orderItem = new OrderItemModel({foodId:orderItems.foodId, quantity:orderItems.quantity, orderId:order._id, unitPrice: orderItems.unitPrice})
+            let orderItem = new OrderItemModel({foodName:orderItems.foodName,foodId:orderItems.foodId, quantity:orderItems.quantity, orderId:order._id, unitPrice: orderItems.unitPrice})
             if(orderItems.toppings) {
                 for(const topping of orderItems.toppings) {
                     toppings.push(new ToppingModel({inGredientName:topping.name,  orderItemId:orderItem._id}).save())
@@ -47,7 +47,7 @@ class ClientController {
             }
             return new OrderItemModel(orderItem.save())
         })
-        order.totalPrice = totalPrice
+        order.totalPrice = totalPrice * orderDetails.quantity
         //save orders and order items
         await Promise.all([order.save(), ...modelOrder, ...toppings])
         return res.status(200).json({"message": "orders saved"})
