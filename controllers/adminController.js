@@ -297,13 +297,13 @@ static addAdmin = async (req, res) => {
  
  static enableIngredient = async (req, res) => {
     let details = req.body
-    if(!(details.name))
+    if(!(details.name && details.status))
         return res.status(400).json({"message": "not all fields given"})
     try {
         let ingredient = await IngredientModel.findOne({name:details.name})
         if(!ingredient)
             return res.status(400).json({"message": "no ingredient entry found for such name"})
-        ingredient.enable = details.status
+        ingredient.enable = details.status == "disable" ? false: true
         await ingredient.save()
         return res.status(200).json({message: "updated"})
     }catch(error) {
