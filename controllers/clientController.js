@@ -63,7 +63,7 @@ class ClientController {
         let cus = await OrderModel.find({email:email}).lean().select("-__v")
         let output = []
         for(const order of cus) {
-            let items = OrderItemModel.find({orderId: order._id}).lean()
+            let items = await OrderItemModel.find({orderId: order._id}).lean()
             order.items = items
             output.push(order)
         }
