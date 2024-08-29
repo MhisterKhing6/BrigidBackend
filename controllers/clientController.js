@@ -27,7 +27,7 @@ class ClientController {
         //order items {email:email, orderItems:[{foodId:quantity, price}, {foodId:quantity, price}]}
         let orderDetails = req.body
         //form food order
-        if(!(orderDetails.quantity && orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
+        if(!(orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
             return res.status(400).json({"message": "not all fields given"})
         //get date of the day of order
 
@@ -47,7 +47,7 @@ class ClientController {
             }
             return new OrderItemModel(orderItem.save())
         })
-        order.totalPrice = totalPrice * orderDetails.quantity
+        order.totalPrice = totalPrice 
         //save orders and order items
         await Promise.all([order.save(), ...modelOrder, ...toppings])
         return res.status(200).json({"message": "orders saved"})
@@ -59,8 +59,14 @@ class ClientController {
     static OrderNotDelivered = async (req, res) => {
         //get customers orders where status is not delivered
         let email = req.params.email
-        let cus = await OrderModel.find({email}).lean().select("-__v")
-        return res.status(200).json(cus)
+        let cus = await OrderModel.find({email:email}).lean().select("-__v")
+        let output = []
+        for(const order of cus) {
+            let items = OrderItemModel.find({orderId: order._id})
+            order.items = items
+            output.push(order)
+        }
+        return res.status(200).json(output)
     }
 
     
