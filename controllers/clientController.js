@@ -58,20 +58,26 @@ class ClientController {
      */
     static OrderNotDelivered = async (req, res) => {
         //get customers orders where status is not delivered
+        try {
         let email = req.params.email
         let cus = await OrderModel.find({email:email}).lean().select("-__v")
         let output = []
         for(const order of cus) {
-            let items = OrderItemModel.find({orderId: order._id})
+            let items = OrderItemModel.find({orderId: order._id}).lean()
             order.items = items
             output.push(order)
         }
         return res.status(200).json(output)
+    } catch(err) {
+        console.log(err)
+        return res.status(500).json({message: "internal error contact admin"})
+    }
     }
 
     
     static orderItems = async (req, res)=>{
         //get order id
+        try {
         let orderId = req.params.orderId
         //find all order item that have given id
         let orderItems = await OrderItemModel.find({orderId}).lean().select("-__v")
@@ -85,6 +91,10 @@ class ClientController {
             orderItemL.push(orderItem)
         }
         return res.status(200).json(orderItemL)
+    } catch(err) {
+        console.log(err)
+        return res.status(500).json({"message": "internal error"})
+    }
     }
 
     static searchFood = async(req, res) => {

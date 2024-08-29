@@ -13,6 +13,7 @@ const connectDb = async () => {
         console.log("connected to database")
     } catch(err){
         console.log(err)
+        console.log("the error is caused by mongod db")
         process.exit(1)
     }
     
