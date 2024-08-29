@@ -2,6 +2,7 @@ import { Schema, Types, model } from "mongoose";
 let Order = new Schema(
     {
     email: {type:String, required:true},
+    phoneNumber: {type:String},
     createdAt : {type:Date, default:Date.now()},
     totalPrice : {type:Number, default:0},
     location: {type:String},

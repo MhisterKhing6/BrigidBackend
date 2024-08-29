@@ -27,11 +27,11 @@ class ClientController {
         //order items {email:email, orderItems:[{foodId:quantity, price}, {foodId:quantity, price}]}
         let orderDetails = req.body
         //form food order
-        if(!(orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
+        if(!(orderDetails.phoneNumber && orderDetails.email && orderDetails.orderItems && orderDetails.location && orderDetails.mode))
             return res.status(400).json({"message": "not all fields given"})
         //get date of the day of order
 
-        let order = await new OrderModel({mode:orderDetails.mode,email:orderDetails.email, location:orderDetails.location}).save()
+        let order = await new OrderModel({phoneNumber:orderDetails.phoneNumber, mode:orderDetails.mode,email:orderDetails.email, location:orderDetails.location}).save()
         
         //calculate total price
         let totalPrice = 0
